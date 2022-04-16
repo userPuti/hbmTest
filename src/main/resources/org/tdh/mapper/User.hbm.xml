@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.tdh.domain">
+
+    <class name="User" table="t_user">
+        <id name="yhid" column="YHID"/>
+        <property name="yhxm" column="YHXM"/>
+        <property name="yhkl" column="YHKL"/>
+        <property name="yhxb" column="YHXB"/>
+        <property name="yhbm" column="YHBM"/>
+        <property name="csrq" column="CSRQ"/>
+        <property name="djrq" column="DJRQ"/>
+        <property name="sfjy" column="SFJY"/>
+        <property name="pxh" column="PXH"/>
+    </class>
+</hibernate-mapping>
