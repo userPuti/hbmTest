@@ -60,4 +60,11 @@ public interface UserDao {
      * @return 更新影响的行数
      */
     boolean updataUser(User user);
+
+    /**
+     * 查询记录条数
+     * @param yhxxDto 用户入参信息
+     * @return 条数
+     */
+    int getTotalNum(YhxxDto yhxxDto);
 }

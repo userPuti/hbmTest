@@ -2,8 +2,10 @@ package org.tdh.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.hibernate.annotations.ColumnTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.tdh.cache.Caches;
 import org.tdh.dao.UserDao;
 import org.tdh.domain.Bzdm;
@@ -29,7 +31,6 @@ public class ImplUserService implements UserService {
 
     @Autowired
     private UserDao userDao;
-
 
     private String userListXml(List<User> list, int count) {
         StringBuilder allUserxml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
@@ -62,9 +63,9 @@ public class ImplUserService implements UserService {
                     allUserxml.append("<cell><![CDATA[").append(pxh).append("]]></cell>");
                 }
 
-                allUserxml.append("<cell><![CDATA[").append("/ssm/static/images/search.png^查看^javascript:view(\"").append(user.getYhid()).append("\")^_self").append("]]></cell>");
-                allUserxml.append("<cell><![CDATA[").append("/ssm/static/images/modify.png^修改^javascript:modify(\"").append(user.getYhid()).append("\")^_self").append("]]></cell>");
-                allUserxml.append("<cell><![CDATA[").append("/ssm/static/images/delete.png^删除^javascript:delInfo(\"").append(user.getYhid()).append("\")^_self").append("]]></cell>");
+                allUserxml.append("<cell><![CDATA[").append("/hbm/static/images/search.png^查看^javascript:view(\"").append(user.getYhid()).append("\")^_self").append("]]></cell>");
+                allUserxml.append("<cell><![CDATA[").append("/hbm/static/images/modify.png^修改^javascript:modify(\"").append(user.getYhid()).append("\")^_self").append("]]></cell>");
+                allUserxml.append("<cell><![CDATA[").append("/hbm/static/images/delete.png^删除^javascript:delInfo(\"").append(user.getYhid()).append("\")^_self").append("]]></cell>");
                 allUserxml.append("</row>");
             }
             allUserxml.append("</rows>");
@@ -155,13 +156,8 @@ public class ImplUserService implements UserService {
     @Override
     public String userInfoDisplay(YhxxDto yhxxDto) {
         if (yhxxDto != null) {
-            PageHelper.offsetPage(yhxxDto.getStart() - 1, yhxxDto.getLimit());
-            List<User> users = userDao.selectUser(yhxxDto);
-            PageInfo<User> usersPageInfo = new PageInfo<>(users);
-            int total = (int) usersPageInfo.getTotal();
-            return userListXml(users, total);
+            return userListXml(userDao.selectUser(yhxxDto), userDao.getTotalNum(yhxxDto)-1);
         }
-
         return "";
     }
 

@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.tdh.dao.DepartDao;
 import org.tdh.domain.Depart;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @date 2022/4/16 16:44
  */
 @Repository
+@Transactional
 public class ImplDepartDao implements DepartDao {
 
     @Autowired

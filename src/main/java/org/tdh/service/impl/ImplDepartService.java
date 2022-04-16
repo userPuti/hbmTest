@@ -3,6 +3,7 @@ package org.tdh.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.tdh.domain.Depart;
 import org.tdh.service.DepartService;
 

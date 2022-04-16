@@ -26,6 +26,7 @@ public class Caches {
     @Autowired
     private BzdmDao bzdmDao;
 
+
     private final String KIND_GENDER = "00003";
     public static final Map<String, Depart> departMap = new HashMap<>();
     public static final Map<String, List<Bzdm>> bzdm_kind_Map = new HashMap<>();

@@ -5,6 +5,8 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.tdh.cache.Caches;
 import org.tdh.dao.UserDao;
 import org.tdh.domain.User;
 import org.tdh.dto.YhxxDto;
@@ -17,6 +19,7 @@ import java.util.List;
  * @date 2022/4/16 9:41
  */
 @Repository
+@Transactional
 public class ImplUserDao implements UserDao {
 
     @Autowired
@@ -64,13 +67,50 @@ public class ImplUserDao implements UserDao {
         }
 
         Session currentSession = hibernateTemplate.getSessionFactory().getCurrentSession();
-        List<User> users = currentSession.createQuery(hql.toString(), User.class).list();
+        Query<User> query = currentSession.createQuery(hql.toString(), User.class);
 
+        query.setFirstResult(yhxxDto.getStart());
+        query.setMaxResults(yhxxDto.getLimit());
+
+        List<User> users  = query.list();
         if (users.size() > 0) {
             return users;
         } else {
             return null;
         }
+    }
+
+    /**
+     * 查询记录条数
+     * @param yhxxDto 用户入参信息
+     * @return 条数
+     */
+    @Override
+    public int getTotalNum(YhxxDto yhxxDto) {
+        StringBuilder hql = new StringBuilder("from User");
+
+        int changed = 0;
+
+        String yhid = yhxxDto.getYhid();
+        if (yhid != null && !yhid.equals("")) {
+            hql.append(" and yhid='").append(yhid).append("'");
+            changed = 1;
+        }
+
+        String yhbm = yhxxDto.getYhbm();
+        if (yhbm != null && !yhbm.equals("")) {
+            hql.append(" and yhbm='").append(yhbm).append("'");
+            changed = 1;
+        }
+
+        if (1 == changed) {
+            hql.replace(hql.indexOf("and"), hql.indexOf("and") + 3, "where");
+        }
+
+        Session currentSession = hibernateTemplate.getSessionFactory().getCurrentSession();
+        Query<User> query = currentSession.createQuery(hql.toString(), User.class);
+
+        return query.list().size();
     }
 
 
