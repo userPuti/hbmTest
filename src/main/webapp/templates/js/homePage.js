@@ -27,7 +27,7 @@ function queryInfo() {
     let yhid = $("#yhzh").val();
     let yhbm = $("#sYhbm").val();
 
-    mygrid.loadXML(CONTEXT_PATH + "/loadUserXml?yhid=" + yhid + "&yhbm=" + yhbm);
+    mygrid.loadXML(CONTEXT_PATH + "loadUserXml?yhid=" + yhid + "&yhbm=" + yhbm);
 
 }
 
@@ -39,7 +39,7 @@ function addForm() {
 //添加用户的回调函数，用于刷新
 function addFormCallback(rtn) {
     if (rtn === "success") {
-        return mygrid.loadXML(CONTEXT_PATH + "/loadUserXml");
+        return mygrid.loadXML(CONTEXT_PATH + "loadUserXml");
     }
 }
 

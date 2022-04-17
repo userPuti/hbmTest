@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.tdh.cache.Caches;
 import org.tdh.dao.UserDao;
 import org.tdh.domain.User;
 import org.tdh.dto.YhxxDto;
@@ -47,33 +46,41 @@ public class ImplUserDao implements UserDao {
     @Override
     public List<User> selectUser(YhxxDto yhxxDto) {
         StringBuilder hql = new StringBuilder("from User");
+        Session currentSession = hibernateTemplate.getSessionFactory().getCurrentSession();
 
-        int changed = 0;
-
+        int idChanged = 0;
+        int bmChanged = 0;
         String yhid = yhxxDto.getYhid();
         if (yhid != null && !yhid.equals("")) {
-            hql.append(" and yhid='").append(yhid).append("'");
-            changed = 1;
+//            hql.append(" and yhid like%'").append(yhid).append("%'");
+            hql.append(" and yhid like :yhidInfo");
+            idChanged = 1;
         }
 
         String yhbm = yhxxDto.getYhbm();
         if (yhbm != null && !yhbm.equals("")) {
-            hql.append(" and yhbm='").append(yhbm).append("'");
-            changed = 1;
+//            hql.append(" and yhbm='").append(yhbm).append("'");
+            hql.append(" and yhbm=:yhbmInfo");
+            bmChanged = 1;
         }
 
-        if (1 == changed) {
+        if (1 == idChanged || 1 == bmChanged) {
             hql.replace(hql.indexOf("and"), hql.indexOf("and") + 3, "where");
         }
 
-        Session currentSession = hibernateTemplate.getSessionFactory().getCurrentSession();
-        Query<User> query = currentSession.createQuery(hql.toString(), User.class);
+        Query query = currentSession.createQuery(hql.toString());
+        if (1 == idChanged) {
+            query.setParameter("yhidInfo", "%"+yhid+"%");
+        }
+        if (1 == bmChanged) {
+            query.setParameter("yhbmInfo", yhbm);
+        }
 
-        query.setFirstResult(yhxxDto.getStart());
+        query.setFirstResult(yhxxDto.getStart() - 1);
         query.setMaxResults(yhxxDto.getLimit());
 
-        List<User> users  = query.list();
-        if (users.size() > 0) {
+        List<User> users = query.list();
+        if(users.size() > 0) {
             return users;
         } else {
             return null;
@@ -81,34 +88,43 @@ public class ImplUserDao implements UserDao {
     }
 
     /**
-     * 查询记录条数
      * @param yhxxDto 用户入参信息
      * @return 条数
+     * @// TODO: 2022/4/17 怎么计算count（yhid）的返回值？
+     * 查询记录条数
      */
     @Override
     public int getTotalNum(YhxxDto yhxxDto) {
         StringBuilder hql = new StringBuilder("from User");
+        Session currentSession = hibernateTemplate.getSessionFactory().getCurrentSession();
 
-        int changed = 0;
-
+        int idChanged = 0;
+        int bmChanged = 0;
         String yhid = yhxxDto.getYhid();
         if (yhid != null && !yhid.equals("")) {
-            hql.append(" and yhid='").append(yhid).append("'");
-            changed = 1;
+//            hql.append(" and yhid like%'").append(yhid).append("%'");
+            hql.append(" and yhid like :yhidInfo");
+            idChanged = 1;
         }
 
         String yhbm = yhxxDto.getYhbm();
         if (yhbm != null && !yhbm.equals("")) {
-            hql.append(" and yhbm='").append(yhbm).append("'");
-            changed = 1;
+//            hql.append(" and yhbm='").append(yhbm).append("'");
+            hql.append(" and yhbm=:yhbmInfo");
+            bmChanged = 1;
         }
 
-        if (1 == changed) {
+        if (1 == idChanged || 1 == bmChanged) {
             hql.replace(hql.indexOf("and"), hql.indexOf("and") + 3, "where");
         }
 
-        Session currentSession = hibernateTemplate.getSessionFactory().getCurrentSession();
-        Query<User> query = currentSession.createQuery(hql.toString(), User.class);
+        Query query = currentSession.createQuery(hql.toString());
+        if (1 == idChanged) {
+            query.setParameter("yhidInfo", "%"+yhid+"%");
+        }
+        if (1 == bmChanged) {
+            query.setParameter("yhbmInfo", yhbm);
+        }
 
         return query.list().size();
     }
@@ -116,6 +132,7 @@ public class ImplUserDao implements UserDao {
 
     /**
      * 根据用户id和用户口令查询用户
+     *
      * @param yhid 用户id
      * @param yhkl 用户口令
      * @return 查到返回user对象，否则返回null
@@ -179,7 +196,7 @@ public class ImplUserDao implements UserDao {
         StringBuilder hql = new StringBuilder("delete from User where");
 
         for (int i = 0; i < yhid.length; i++) {
-            if(0 == i) {
+            if (0 == i) {
                 hql.append(" yhid = '").append(yhid[i]).append("'");
             } else {
                 hql.append(" or yhid = '").append(yhid[i]).append("'");
@@ -200,17 +217,16 @@ public class ImplUserDao implements UserDao {
     @Override
     public boolean updataUser(User user) {
         String hql = "update User set yhxm = :yhxmInfo, yhkl = :yhklInfo, yhxb= :yhxbInfo, yhbm = :yhbmInfo," +
-                "csrq = :csrqInfo, djrq = :djrqInfo,sfjy = :sfjyInfo, pxh = :pxhInfo where yhid = :yhidInfo";
+                "csrq = :csrqInfo,sfjy = :sfjyInfo, pxh = :pxhInfo where yhid = :yhidInfo";
         Session currentSession = hibernateTemplate.getSessionFactory().getCurrentSession();
         int num = currentSession.createQuery(hql).setParameter("yhxmInfo", user.getYhxm())
                 .setParameter("yhklInfo", user.getYhkl())
                 .setParameter("yhxbInfo", user.getYhxb())
                 .setParameter("yhbmInfo", user.getYhbm())
                 .setParameter("csrqInfo", user.getCsrq())
-                .setParameter("djrqInfo", user.getDjrq())
                 .setParameter("sfjyInfo", user.getSfjy())
                 .setParameter("pxhInfo", user.getPxh())
                 .setParameter("yhidInfo", user.getYhid()).executeUpdate();
-        return  1 == num;
+        return 1 == num;
     }
 }

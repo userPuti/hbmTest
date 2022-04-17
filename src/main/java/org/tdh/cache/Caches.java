@@ -34,7 +34,7 @@ public class Caches {
 
     @PostConstruct
     private void initDepartMap() {
-       //查库加载缓存
+        //查库加载缓存
         List<Depart> departs = departDao.selectAllDepart();
         for (Depart depart : departs) {
             departMap.put(depart.getBmdm(), depart);
@@ -46,10 +46,14 @@ public class Caches {
         List<Bzdm> bzdms = bzdmDao.selectBzdmByKind(KIND_GENDER);
 
         for (Bzdm bzdm : bzdms) {
-            if(bzdm_kind_Map.containsKey(bzdm.getId().getKind())){
+            if (bzdm_kind_Map.containsKey(bzdm.getId().getKind())) {
+                bzdm.setKind(bzdm.getId().getKind());
+                bzdm.setCode(bzdm.getId().getCode());
                 bzdm_kind_Map.get(bzdm.getId().getKind()).add(bzdm);
-            }else{
+            } else {
                 List<Bzdm> list = new ArrayList<>();
+                bzdm.setKind(bzdm.getId().getKind());
+                bzdm.setCode(bzdm.getId().getCode());
                 list.add(bzdm);
                 bzdm_kind_Map.put(bzdm.getId().getKind(), list);
             }
