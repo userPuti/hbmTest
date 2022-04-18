@@ -220,14 +220,12 @@ public class ImplUserService implements UserService {
     @Override
     public boolean updateUserInfo(User user) {
         if (user != null) {
-            try {
-                String yhid = URLDecoder.decode(URLDecoder.decode(user.getYhid(), "utf-8"), "utf-8");
-                String yhxm = URLDecoder.decode(URLDecoder.decode(user.getYhxm(), "utf-8"), "utf-8");
-                user.setYhid(yhid);
-                user.setYhxm(yhxm);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+//                String yhid = URLDecoder.decode(URLDecoder.decode(user.getYhid(), "utf-8"), "utf-8");
+            String yhid = user.getYhid();
+            String yhxm = user.getYhxm();
+            user.setYhid(yhid);
+            user.setYhxm(yhxm);
+
             String sfjy = user.getSfjy();
             if (Objects.equals(sfjy, "on")) {
                 user.setSfjy("1");

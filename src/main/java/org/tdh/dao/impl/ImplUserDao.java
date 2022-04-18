@@ -52,14 +52,12 @@ public class ImplUserDao implements UserDao {
         int bmChanged = 0;
         String yhid = yhxxDto.getYhid();
         if (yhid != null && !yhid.equals("")) {
-//            hql.append(" and yhid like%'").append(yhid).append("%'");
             hql.append(" and yhid like :yhidInfo");
             idChanged = 1;
         }
 
         String yhbm = yhxxDto.getYhbm();
         if (yhbm != null && !yhbm.equals("")) {
-//            hql.append(" and yhbm='").append(yhbm).append("'");
             hql.append(" and yhbm=:yhbmInfo");
             bmChanged = 1;
         }
@@ -102,14 +100,12 @@ public class ImplUserDao implements UserDao {
         int bmChanged = 0;
         String yhid = yhxxDto.getYhid();
         if (yhid != null && !yhid.equals("")) {
-//            hql.append(" and yhid like%'").append(yhid).append("%'");
             hql.append(" and yhid like :yhidInfo");
             idChanged = 1;
         }
 
         String yhbm = yhxxDto.getYhbm();
         if (yhbm != null && !yhbm.equals("")) {
-//            hql.append(" and yhbm='").append(yhbm).append("'");
             hql.append(" and yhbm=:yhbmInfo");
             bmChanged = 1;
         }
@@ -125,6 +121,8 @@ public class ImplUserDao implements UserDao {
         if (1 == bmChanged) {
             query.setParameter("yhbmInfo", yhbm);
         }
+
+//        query.iterate().next();
 
         return query.list().size();
     }

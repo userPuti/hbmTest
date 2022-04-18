@@ -15,7 +15,6 @@ import org.tdh.domain.Bzdm;
 import org.tdh.domain.Depart;
 import org.tdh.domain.User;
 import org.tdh.dto.YhxxDto;
-import org.tdh.service.DepartService;
 import org.tdh.service.UserService;
 import org.tdh.utils.response.ResResult;
 import org.tdh.utils.response.ResponseVO;
@@ -34,8 +33,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private DepartService departService;
 
     /**
      * 加载用户信息
